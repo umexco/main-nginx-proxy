@@ -34,6 +34,10 @@ set the following environment variables in its `docker-compose.yaml` file:
 - `VIRTUAL_HOST`: the target domain for the service
 - `VIRTUAL_PORT`: the service port where the service is accessible
 
+To run a service behind a sub-route, also add the following environment variables:
+- `VIRTUAL_PATH`: path, e.g. `VIRTUAL_PATH=/myapp`
+- `VIRTUAL_DEST=/` as rewrite base
+
 The `VIRTUAL_PORT` may vary depending on the configuration. 
 For example, if you started your application web server using `php artisan serve --port=8765`, the variable should be set to `VIRTUAL_PORT=8765` accordingly.
 
