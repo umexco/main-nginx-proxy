@@ -1,0 +1,43 @@
+# IMPORTANT before start: Create global docker network using:
+# $ docker network create main-nginx-proxy
+
+version: "3"
+
+services:
+   nginx-proxy:
+      image: nginxproxy/nginx-proxy:alpine
+      container_name: nginx-proxy
+      ports:
+         - "80:80"
+         - "443:443"
+      volumes:
+         - "./volumes/certs:/etc/nginx/certs"
+         - "./volumes/vhost:/etc/nginx/vhost.d"
+         - "./volumes/html:/usr/share/nginx/html"
+         - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      labels:
+         com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+      networks:
+         - main-nginx-proxy
+      restart: unless-stopped
+
+   acme-companion:
+      image: nginxproxy/acme-companion:2.2
+      container_name: acme-companion
+      volumes_from:
+         - nginx-proxy
+      volumes:
+         - "./volumes/acme:/etc/acme.sh"
+         - "/var/run/docker.sock:/var/run/docker.sock"
+      environment:
+         - NGINX_PROXY_CONTAINER=nginx-proxy
+         - DEFAULT_EMAIL=info@company.com
+      depends_on:
+         - nginx-proxy
+      networks:
+         - main-nginx-proxy
+      restart: unless-stopped
+
+networks:
+   main-nginx-proxy:
+      external: true
