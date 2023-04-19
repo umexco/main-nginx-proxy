@@ -26,7 +26,7 @@ docker compose up -d
 ```
 
 
-### 4. Connect other services
+### 4. Connect other Docker services
 To make a service accessible through the proxy server, 
 set the following environment variables in its `docker-compose.yaml` file:
 
@@ -68,3 +68,33 @@ docker compose up -d
 
 After a few seconds, the new service should be available at the configured domain. The nginx proxy automatically detects the new service after launch and
 obtains a certificate for the domain if required.
+
+### 5. Host services
+To make services that run on the host machine available through the proxy service, use the following steps.
+We assume, the service should use the domain `test123.com` and is running on port `8765`
+
+#### 1. Create a `test123.com.conf` in your `main-nginx-proxy` directory
+```conf
+server {
+    listen 80;
+    server_name test123.com;
+
+    location / {
+        proxy_pass http://host.docker.internal:8765;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/certs/test123.com.crt;
+    ssl_certificate_key /etc/nginx/certs/test123.com.key;
+}
+```
+#### 2. Mount the config file into the proxy container by adding the volume to the `docker-compose.yaml`.
+```yaml
+volumes:
+    - "./docker/vhosts/test123.com.conf:/etc/nginx/vhost.d/test123.com.conf"
+```
+
+#### 3. Probably run `docker compose restart nginx-proxy` if your proxy service is already running.
