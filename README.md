@@ -100,4 +100,6 @@ volumes:
     - "./docker/vhosts/test123.com.conf:/etc/nginx/vhost.d/test123.com.conf"
 ```
 
-#### 3. Probably run `docker compose restart nginx-proxy` if your proxy service is already running.
+#### 3. Apply the new config
+Probably recreate the container if your proxy service was already running.
+- `docker compose up -d --force-recreate nginx-proxy`
