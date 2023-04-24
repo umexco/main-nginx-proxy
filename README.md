@@ -97,7 +97,7 @@ server {
 #### 2. Mount the config file into the proxy container by adding the volume to the `docker-compose.yaml`.
 ```yaml
 volumes:
-    - "./docker/vhosts/test123.com.conf:/etc/nginx/vhost.d/test123.com.conf"
+    - ./docker/vhosts/test123.com.conf:/etc/nginx/vhost.d/test123.com.conf
 ```
 
 #### 3. Apply the new config
@@ -112,7 +112,7 @@ environment:
     - VIRTUAL_HOST=domain.com
 ```
 
-Then creating a config `www.domain.com.conf` with this content. Using variables in the SSL path is unfortunately not possible due to permissions.
+Then create a config `www.domain.com.conf` with this content. Using variables in the SSL path is unfortunately not possible due to permissions.
 ```perl
 server {
    listen 80;
