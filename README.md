@@ -69,6 +69,9 @@ docker compose up -d
 After a few seconds, the new service should be available at the configured domain. The nginx proxy automatically detects the new service after launch and
 obtains a certificate for the domain if required.
 
+Finished
+
+## Special configurations
 ### 5. Host services
 To make services that run on the host machine available through the proxy service, use the following steps.
 We assume, the service should use the domain `test123.com` and is running on port `8765`
