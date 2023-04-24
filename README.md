@@ -49,8 +49,8 @@ services:
       image: nginxdemos/hello
       container_name: hello-world
       environment:
-         - LETSENCRYPT_HOST=domain.com,www.domain.com
-         - VIRTUAL_HOST=domain.com,www.domain.com
+         - LETSENCRYPT_HOST=domain.com
+         - VIRTUAL_HOST=domain.com
          - VIRTUAL_PORT=80
       networks:
          - main-nginx-proxy
@@ -60,7 +60,6 @@ networks:
    main-nginx-proxy:
       external: true
 ```
-**If you don't want to apply the www subdomain, just remove it from the list.**
 
 Finally start the service
 ```sh
@@ -78,7 +77,7 @@ To make services that run on the host machine available through the proxy servic
 We assume, the service should use the domain `test123.com` and is running on port `8765`
 
 #### 1. Create a `test123.com.conf` in your `main-nginx-proxy` directory
-```conf
+```perl
 server {
     listen 80;
     server_name test123.com;
@@ -104,3 +103,45 @@ volumes:
 #### 3. Apply the new config
 Probably recreate the container if your proxy service was already running.
 - `docker compose up -d --force-recreate nginx-proxy`
+
+
+### 6. Forward `www` subdomains
+```yaml
+environment:
+    - LETSENCRYPT_HOST=domain.com,www.domain.com
+    - VIRTUAL_HOST=domain.com
+```
+
+Then creating a config `www.domain.com.conf` with this content. Using variables in the SSL path is unfortunately not possible due to permissions.
+```perl
+server {
+   listen 80;
+   listen [::]:80;
+   server_name www.domain.com;
+
+   return 301 https://domain.com$request_uri;
+}
+
+server {
+   listen 443 ssl http2;
+   listen [::]:443 ssl http2;
+   server_name www.domain.com;
+
+   ssl_certificate /etc/nginx/certs/domain.com.crt;
+   ssl_certificate_key /etc/nginx/certs/domain.com.key;
+
+   return 301 https://domain.com$request_uri;
+}
+
+```
+
+Mount it
+```yaml
+volumes:
+    - ./docker/vhosts/www.domain.com.conf:/etc/nginx/conf.d/www.domain.com.conf:ro
+```
+
+Finally restart the nginx-proxy
+```sh
+docker compose up -d --force-recreate nginx-proxy
+```
