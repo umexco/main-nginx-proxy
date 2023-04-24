@@ -49,8 +49,8 @@ services:
       image: nginxdemos/hello
       container_name: hello-world
       environment:
-         - LETSENCRYPT_HOST=testing.domain.com
-         - VIRTUAL_HOST=testing.domain.com
+         - LETSENCRYPT_HOST=domain.com,www.domain.com
+         - VIRTUAL_HOST=domain.com,www.domain.com
          - VIRTUAL_PORT=80
       networks:
          - main-nginx-proxy
@@ -60,6 +60,7 @@ networks:
    main-nginx-proxy:
       external: true
 ```
+**If you don't want to apply the www subdomain, just remove it from the list.**
 
 Finally start the service
 ```sh
