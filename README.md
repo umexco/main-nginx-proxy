@@ -13,7 +13,7 @@ Before starting any docker containers, run
 ```sh
 docker network create main-nginx-proxy
 ```
-
+to create a global proxy network.<br>
 All containers that need to communicate with the proxy server must join this network.
 
 
