@@ -17,8 +17,8 @@ services:
          - "./volumes/certs:/etc/nginx/certs"
          - "./volumes/vhost:/etc/nginx/vhost.d"
          - "./volumes/html:/usr/share/nginx/html"
-         - "./docker/nginx/conf/:/etc/nginx/conf.d/:ro"
-         - "./docker/nginx/vhosts/:/etc/nginx/vhost.d/:ro"
+         - "./docker/nginx/conf/custom.conf:/etc/nginx/conf.d/custom.conf:ro"
+         # - "./docker/nginx/vhost/example.com.conf:/etc/nginx/vhost.d/example.com.conf:ro"
       labels:
          com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx: "true"
       networks:
