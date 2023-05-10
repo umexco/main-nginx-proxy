@@ -13,10 +13,10 @@ services:
          - "80:80"
          - "443:443"
       volumes:
+         - "/var/run/docker.sock:/tmp/docker.sock:ro"
          - "./volumes/certs:/etc/nginx/certs"
          - "./volumes/vhost:/etc/nginx/vhost.d"
          - "./volumes/html:/usr/share/nginx/html"
-         - "/var/run/docker.sock:/tmp/docker.sock:ro"
          - "./docker/nginx/conf/:/etc/nginx/conf.d/:ro"
          - "./docker/nginx/vhosts/:/etc/nginx/vhost.d/:ro"
       labels:
