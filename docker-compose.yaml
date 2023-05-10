@@ -4,9 +4,9 @@
 version: "3"
 
 services:
-   nginx-proxy:
+   nginx:
       image: nginxproxy/nginx-proxy:alpine
-      container_name: nginx-proxy
+      container_name: MNP_nginx-proxy
       environment:
          - ENABLE_IPV6=true
       ports:
@@ -17,25 +17,27 @@ services:
          - "./volumes/vhost:/etc/nginx/vhost.d"
          - "./volumes/html:/usr/share/nginx/html"
          - "/var/run/docker.sock:/tmp/docker.sock:ro"
+         - "./docker/nginx/conf/:/etc/nginx/conf.d/:ro"
+         - "./docker/nginx/vhosts/:/etc/nginx/vhost.d/:ro"
       labels:
-         com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+         com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx: "true"
       networks:
          - main-nginx-proxy
       restart: unless-stopped
 
-   acme-companion:
+   acme:
       image: nginxproxy/acme-companion:2.2
-      container_name: acme-companion
+      container_name: MNP_acme-companion
       volumes_from:
-         - nginx-proxy
+         - nginx
       volumes:
          - "./volumes/acme:/etc/acme.sh"
          - "/var/run/docker.sock:/var/run/docker.sock"
       environment:
-         - NGINX_PROXY_CONTAINER=nginx-proxy
+         - NGINX_PROXY_CONTAINER=nginx
          - DEFAULT_EMAIL=info@company.com
       depends_on:
-         - nginx-proxy
+         - nginx
       networks:
          - main-nginx-proxy
       restart: unless-stopped
