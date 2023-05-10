@@ -154,22 +154,9 @@ docker compose up -d --force-recreate nginx
 ```
 
 
-### 7. Temporary extra configuration
-If you need temporary adjustments on a specific host, e.g. to increase the file upload size to import a backup in phpmyadmin, you can use the following steps.
-1. `docker compose exec nginx bash`
-2. `vi /etc/nginx/conf.d/default.conf`
-3. Make your adjustments, e.g. add `client_max_body_size 1G;`
-5. `/usr/sbin/nginx -s reload`
-
-#### Important vi commands:
-1. `i` - insert mode (to start typing)
-2. `Esc` - command mode (to stop typing and enter command mode)
-3. `:w` - save the file
-4. `:q` - quit vi
-5. `:q!` - force quit vi (discard changes)
-6. `:wq` - save and quit vi
-7. `yy` - copy the current line
-8. `dd` - delete the current line
-9. `p` - paste the copied or deleted text
-10. `u` - undo the last change
-11. `Ctrl-r` - redo the last undo
+### 7. Custom extra configuration
+If you need adjustments, e.g. to increase the file upload size you can adjust the `./docker/nginx/conf/custom.conf` or create a new config file.
+Make sure to reload or restart the nginx after it.
+```sh
+docker compose up -d --force-recreate nginx
+```
