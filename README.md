@@ -74,9 +74,9 @@ Finished
 ## Special configurations
 ### 5. Host services
 To make services that run on the host machine available through the proxy service, use the following steps.
-We assume, the service should use the domain `test123.com` and is running on port `8765`
+We assume, the service should use the domain `example.com` and is running on port `8765`
 
-#### 1. Create a `test123.com.conf` in your `main-nginx-proxy` directory
+#### 1. Create a `example.com.conf` in your `main-nginx-proxy/docker/nginx/vhost/` directory
 ```perl
 server {
     listen 80;
@@ -97,20 +97,28 @@ server {
 #### 2. Mount the config file into the proxy container by adding the volume to the `docker-compose.yaml`.
 ```yaml
 volumes:
-    - ./docker/vhosts/test123.com.conf:/etc/nginx/vhost.d/test123.com.conf
+    - ./docker/nginx/vhost/example.com.conf:/etc/nginx/vhost.d/example.com.conf
 ```
 
 #### 3. Apply the new config
 Probably recreate the container if your proxy service was already running.
-- `docker compose up -d --force-recreate nginx-proxy`
+- `docker compose up -d --force-recreate nginx`
 
 
 ### 6. Forward `www` subdomains
+**IMPORTANT:** Before creating this vhost, make sure you have the cert for the TLD with `LETSENCRYPT_HOST=domain.com,www.domain.com` up and running!
+
 ```yaml
 environment:
     - LETSENCRYPT_HOST=domain.com,www.domain.com
     - VIRTUAL_HOST=domain.com
 ```
+
+First restart to obtain the www included cert:
+```sh
+docker compose up -d --force-recreate nginx
+```
+
 
 Then create a config `www.domain.com.conf` with this content. Using variables in the SSL path is unfortunately not possible due to permissions.
 ```perl
@@ -137,18 +145,18 @@ server {
 Mount it
 ```yaml
 volumes:
-    - ./docker/vhosts/www.domain.com.conf:/etc/nginx/conf.d/www.domain.com.conf:ro
+    - ./docker/nginx/vhost/www.domain.com.conf:/etc/nginx/conf.d/www.domain.com.conf:ro
 ```
 
 Finally restart the nginx-proxy
 ```sh
-docker compose up -d --force-recreate nginx-proxy
+docker compose up -d --force-recreate nginx
 ```
 
 
 ### 7. Temporary extra configuration
 If you need temporary adjustments on a specific host, e.g. to increase the file upload size to import a backup in phpmyadmin, you can use the following steps.
-1. `docker compose exec nginx-proxy bash`
+1. `docker compose exec nginx bash`
 2. `vi /etc/nginx/conf.d/default.conf`
 3. Make your adjustments, e.g. add `client_max_body_size 1G;`
 5. `/usr/sbin/nginx -s reload`
