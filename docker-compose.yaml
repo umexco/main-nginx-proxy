@@ -34,7 +34,7 @@ services:
          - "./volumes/acme:/etc/acme.sh"
          - "/var/run/docker.sock:/var/run/docker.sock"
       environment:
-         - NGINX_PROXY_CONTAINER=nginx
+         - NGINX_PROXY_CONTAINER=MNP_nginx-proxy
          - DEFAULT_EMAIL=info@company.com
       depends_on:
          - nginx
