@@ -1,8 +1,6 @@
 # IMPORTANT before start: Create global docker network using:
 # $ docker network create main-nginx-proxy
 
-version: "3"
-
 services:
    nginx:
       image: nginxproxy/nginx-proxy:alpine
