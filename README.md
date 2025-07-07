@@ -42,8 +42,6 @@ The `VIRTUAL_PORT` may vary depending on the configuration.
 For example, if you started your application web server using `php artisan serve --port=8765`, the variable should be set to `VIRTUAL_PORT=8765` accordingly.
 
 ```yaml
-version: "3"
-
 services:
    helloworld:
       image: nginxdemos/hello
